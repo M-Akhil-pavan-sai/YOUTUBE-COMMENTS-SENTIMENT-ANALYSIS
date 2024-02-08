@@ -20,7 +20,8 @@ def encode_texts(text_list):
     encoded_texts = []
     for text in text_list:
         tokens = tf.keras.preprocessing.text.text_to_word_sequence(text)
-        tokens = [tokenizer.word_index[word] if word in tokenizer.word_index else 0 for word in tokens]
+        # tokens = [tokenizer.word_index[word] if word in tokenizer.word_index else 0 for word in tokens]
+        tokens = [tokenizer.word_index[word] if word in tokenizer.word_index and tokenizer.word_index[word] < VOCAB_SIZE else 0 for word in tokens]
         encoded_texts.append(tokens)
     return pad_sequences(encoded_texts, maxlen=MAX_LEN, padding='post', value=VOCAB_SIZE-1)
 
@@ -37,7 +38,3 @@ def predict_sentiments(text_list):
         else:
             sentiments.append("Positive")
     return sentiments
-
-input_text = input("Enter Comment:")
-result = predict_sentiments([input_text])
-print("result: ",result)
