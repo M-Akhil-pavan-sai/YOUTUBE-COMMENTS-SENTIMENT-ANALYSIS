@@ -4,41 +4,172 @@
 <head>
     <title>YouTube Sentiment Analysis</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
+        /* Reset some default styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        table {
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f4f4f4; /* Updated background color for the whole page */
+            color: #333;
+            line-height: 1.6;
+            padding: 20px; /* Updated padding for the whole page */
+            text-align: center;
+        }
+
+        .header {
+            background-color: #FF0000; /* YouTube red color */
+            color: white;
+            padding: 10px 0;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2em; /* Large font size for heading */
+            margin: 0;
+            padding: 0;
+            text-align: center; /* Center the heading text */
+        }
+
+        form {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        input[type="text"], input[type="submit"] {
+            padding: 10px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+        }
+
+        input[type="text"] {
+            width: 300px; /* Specific width for text input */
+        }
+
+        input[type="submit"] {
+            background-color: #cc181e;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #e52d27;
+        }
+
+        h2, h3 {
+            color: #cc181e;
+            margin: 20px 0;
+        }
+
+        p {
+            margin-bottom: 5px;
+        }
+
+        table, th, td {
             margin: 20px auto;
             border-collapse: collapse;
-            width: 90%;
-            table-layout: fixed;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            background-color: white; /* Updated background color for table */
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1); /* Shadow for table */
+            width: 80%; /* Updated width for table */
+            text-align: left; /* Text align for table cells */
         }
 
-        th,
-        td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            word-wrap: break-word;
+        th {
+            background-color: #f8f8f8;
+            color: #cc181e;
+        }
+
+        td.sentiment {
+            font-weight: bold;
+        }
+
+        td.sentiment.positive {
+            color: #4caf50;
+        }
+
+        td.sentiment.negative {
+            color: #e52d27;
+        }
+
+        /* Card styling */
+        .summary-card {
+            background: #fff; /* White background for the card */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Simple shadow */
+            padding: 20px; /* Padding inside the card */
+            margin: 20px auto; /* Center the card with some margin */
+            width: 90%; /* Card width */
+            max-width: 700px; /* Maximum width of the card */
+            text-align: left; /* Align text to left */
+        }
+
+        .summary-card h2, .summary-stat, .summary-stat span {
+            color: #cc181e; /* YouTube red color for the heading */
+            font-size: 1.2em; /* Slightly larger font size for stats */
+            margin-bottom: 15px; /* Space below the heading and stats */
+            font-weight: bold; /* Make the stat number bold */
+        }
+
+        /* Rating bar */
+        .rating-bar-container {
+            background-color: #e0e0e0; /* Light grey background */
+            border-radius: 8px; /* Rounded corners for the bar container */
+            overflow: hidden; /* Ensures the inner bar stays within the container's rounded corners */
+            width: 100%; /* Full width of the container */
+            margin-bottom: 15px; /* Space below the bar container */
+        }
+
+        .rating-bar {
+            height: 20px; /* Fixed height for the rating bar */
+            background-color: #4caf50; /* Green color for the positive rating */
+            width: 0; /* Initial width, we will set this with inline styles */
+            transition: width 0.5s ease-in-out; /* Smooth transition for the bar loading */
+        }
+
+        /* Responsive design */
+        @media only screen and (max-width: 768px) {
+            input[type="text"] {
+                width: 80%;
+                margin-bottom: 10px;
+            }
+
+            table, .summary-card {
+                width: 95%; /* Full width on smaller screens */
+            }
         }
     </style>
+
 </head>
 
 <body>
-
+    <div class="header">
+        <h1>YouTube Comments Sentiment Analysis</h1>
+    </div>
     <form action="/" method="post">
         <input type="text" name="video_url" placeholder="Enter YouTube URL" required>
         <input type="submit" value="Analyze">
     </form>
 
     {% if summary %}
-    <h2>Summary</h2>
-    <p>Positive: {{ summary['positive'] }}</p>
-    <p>Negative: {{ summary['negative'] }}</p>
-    <p>Number of Comments: {{ summary['num_comments'] }}</p>
-    <p>Rating: {{ summary['rating'] }}%</p>
+    <div class="summary-card">
+        <h2>Summary</h2>
+        <p class="summary-stat">Positive: <span>41</span></p>
+        <p class="summary-stat">Negative: <span>24</span></p>
+        <p class="summary-stat">Number of Comments: <span>65</span></p>
+        <p class="summary-stat">Rating: <span>63.08%</span></p>
+        <div class="rating-bar-container">
+            <div class="rating-bar" style="width: 63.08%;"></div>
+        </div>
+    </div>
+
 
     <h3>Comments</h3>
     <table>
@@ -49,7 +180,7 @@
         {% for comment, sentiment in comments %}
         <tr>
             <td>{{ comment }}</td>
-            <td>{{ sentiment }}</td>
+            <td class="sentiment {{ 'positive' if sentiment == 'Positive' else 'negative' }}">{{ sentiment }}</td>
         </tr>
         {% endfor %}
     </table>

@@ -40,5 +40,16 @@ def index():
         comments = list(zip(data['comments'], data['predictions']))
     return render_template('index.html', summary=summary, comments=comments)
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # Pass the error to the template
+    # e.name is the status code name, e.code is the status code, e.description gives detail about the error
+    error_info = {
+        'error_title': getattr(e, 'name', 'Error Occurred'),
+        'error_message': getattr(e, 'description', 'An unexpected error occurred.'),
+        'error_code': getattr(e, 'code', 500),
+    }
+    return render_template('error.html', **error_info), getattr(e, 'code', 500)
+
 if __name__ == '__main__':
     app.run(debug=True)
